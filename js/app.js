@@ -4,6 +4,7 @@
 
   var ENTER_KEY = 13;
   var newTodoDom = document.getElementById('new-todo');
+  var newTodoType = document.getElementById('new-todo-type');
   var syncDom = document.getElementById('sync-wrapper');
 
   // EDITING STARTS HERE (you dont need to edit anything above this line)
@@ -19,10 +20,14 @@
   });
 
   // We have to create a new todo document and enter it in the database
-  function addTodo(text, type, color, content, parent) {
+  function addParagraph(text, type) {
     var todo = {
       _id: new Date().toISOString(),
-      title: text,
+      type: type,
+      text: text,
+      color: 0xffffff,
+      content: [],
+      parent: null,
       completed: false
     };
     db.put(todo).then(function (result) {
@@ -107,7 +112,7 @@
     checkbox.addEventListener('change', checkboxChanged.bind(this, todo));
 
     var label = document.createElement('label');
-    label.appendChild( document.createTextNode(todo.title));
+    label.appendChild( document.createTextNode(todo.text));
     label.addEventListener('dblclick', todoDblClicked.bind(this, todo));
 
     var deleteLink = document.createElement('button');
@@ -123,7 +128,7 @@
     var inputEditTodo = document.createElement('input');
     inputEditTodo.id = 'input_' + todo._id;
     inputEditTodo.className = 'edit';
-    inputEditTodo.value = todo.title;
+    inputEditTodo.value = todo.text;
     inputEditTodo.addEventListener('keypress', todoKeyPressed.bind(this, todo));
     inputEditTodo.addEventListener('blur', todoBlurred.bind(this, todo));
 
@@ -150,9 +155,12 @@
 
   function newTodoKeyPressHandler( event ) {
     if (event.keyCode === ENTER_KEY) {
-      addTodo(newTodoDom.value);
+      if(newTodoType.value = "paragraph")
+        addParagraph(newTodoDom.value, newTodoType.value);
+        
       newTodoDom.value = '';
     }
+    
   }
 
   function addEventListeners() {
