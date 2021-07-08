@@ -14,33 +14,25 @@
 </head>
 
 <body>
-  <div id="app">
+  <div id="app" class="d-flex align-items-center justify-content-center">
     <v-app>
       <v-container>
-        <v-row aling="center">
-          <v-col>
-            <v-btn href="/note">ADD NOTE</v-btn>
-          </v-col>
+        <v-row class="title" aling="center" justify="center">Login</v-row> 
+        
+        <v-row aling="center" justify="center" style="height:100vh">
+            <v-col cols="12" lg="6" md="6" class="fill-height d-flex flex-column justify-center align-center">
+                <v-card elevation="2" shaped tile>
+                    <div class="ml-4 mr-4">
+                        <form action="http://localhost:5984/_session">
+                            <v-text-field class="mt-4" label="Username" :rules="rules" hide-details="auto"></v-text-field>
+                            <v-text-field class="mt-4" label="Password"></v-text-field>
+                            <input type="submit" value="Submit">
+                        </form>
+                    </div> 
+                </v-card>
+            </v-col>
         </v-row>
-      </v-container>
-      <v-container>
-        <v-row>
-          <v-col>
-            <div id="new-todo" placeholder="What needs to be done?" autofocus></div>
-            <div class="hidden" id="new-todo-type" value="paragraph"></div>
-            <section id="main">
-              <ul id="todo-list"></ul>
-            </section>
-            <footer id="footer">
-              <span id="todo-count"></span>
-              <div id="sync-wrapper">
-                <div id="sync-success">Currently syncing</div>
-                <div id="sync-error">There was a problem syncing</div>
-              </div>
-            </footer>
-          </v-col>
-        </v-row>
-      </v-container>
+      </v-container>   
     </v-app>
   </div>
 

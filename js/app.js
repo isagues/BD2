@@ -10,7 +10,7 @@
   // EDITING STARTS HERE (you dont need to edit anything above this line)
 
   var db = new PouchDB('todos');
-  var remoteCouch = 'http://admin:mypassword@localhost:5984/todos';
+  var remoteCouch = 'http://admin:admin@localhost:5984/todos';
   
   db.info(function(err, info) {
     db.changes({
@@ -164,7 +164,7 @@
   }
 
   function addEventListeners() {
-    newTodoDom.addEventListener('keypress', newTodoKeyPressHandler, false);
+    //newTodoDom.addEventListener('keypress', newTodoKeyPressHandler, false);
   }
 
   addEventListeners();
