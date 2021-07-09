@@ -22,6 +22,11 @@ export default new Vuex.Store({
       localStorage.setItem("user-db-name", state.user.db.name);
       localStorage.setItem("user-db-url", state.user.db.url);
     },
+    disconnect() {
+        localStorage.removeItem("user-name");
+        localStorage.removeItem("user-db-name");
+        localStorage.removeItem("user-db-url");
+    }
   },
   actions: {},
   modules: {},

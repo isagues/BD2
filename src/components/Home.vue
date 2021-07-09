@@ -26,7 +26,7 @@
           </v-card>
         </v-col>
         <v-col align="end">
-          <v-btn outlined color="red"> Logout </v-btn>
+          <v-btn outlined @click="logOut()" color="red"> Logout </v-btn>
         </v-col>
       </v-row>
       <v-row justify="center" v-if="notes">
@@ -160,6 +160,12 @@ export default {
     );
   },
   methods: {
+    logOut() {
+        this.$pouch.disconnect(this.$store.state.user.db.url).then(console.log).catch(console.log);
+        this.$store.commit('disconnect');
+        this.$router.push("/");
+    },
+
     createNote() {
       let note = {
         _id: new Date().toISOString(),
