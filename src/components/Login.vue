@@ -26,9 +26,11 @@
                     class="mt-4"
                     :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                     :rules="[rules.required]"
+                    :error-messages="invalidCredential"
                     :type="show1 ? 'text' : 'password'"
                     v-model="password"
                     label="Password"
+                    @keyup.enter="connectToDatabase()"
                     @click:append="show1 = !show1"
                   ></v-text-field>
                 </v-col>
@@ -70,6 +72,7 @@ export default {
       username: null,
       password: null,
       show1: false,
+      unauthorized: false,
       rules: {
         required: (value) => !!value || "Required.",
       },
@@ -93,6 +96,14 @@ export default {
       })
       .catch(console.log);
   },
+  computed: {
+    invalidCredential() {
+        if (this.unauthorized)
+            return "Invalid credentials.";
+        else
+            return null;
+    }
+  },
   methods: {
     connectToDatabase() {
       let database = "userdb-" + String2Hex(this.username);
@@ -107,6 +118,7 @@ export default {
             return;
           }
           if (isUnauthorized) {
+            this.unauthorized = true;
             return;
           }
           this.$store.commit("insert", {
@@ -116,6 +128,7 @@ export default {
           this.$router.push("/home");
         })
         .catch((error) => {
+          console.log("ERROR");
           console.error(error);
         });
     },
