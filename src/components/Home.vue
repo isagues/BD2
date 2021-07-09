@@ -1,8 +1,9 @@
 <template>
   <div>
     <v-container>
-      <v-row align="center" justify="center">
-        <v-col cols="5">
+      <v-row justify="center" align="center">
+        <v-col cols="3"><span></span></v-col>
+        <v-col class="ml-16" cols="5">
           <v-card color="indigo darken-5" dark class="rounded-xl">
             <v-container fluid>
               <v-row align="center" justify="center">
@@ -23,6 +24,9 @@
               </v-row>
             </v-container>
           </v-card>
+        </v-col>
+        <v-col align="end">
+          <v-btn outlined color="red"> Logout </v-btn>
         </v-col>
       </v-row>
       <v-row justify="center" v-if="notes">
@@ -90,15 +94,18 @@
                             outlined
                             small
                             fab
-                            @click.stop="
-                              openWarningDialog(note)
-                            "
+                            @click.stop="openWarningDialog(note)"
                           >
                             <v-icon>mdi-close</v-icon>
                           </v-btn>
                         </v-col>
                         <v-col cols="10">
-                          <h1 class="ml-3 align-center" style="font-family: 'Arial Rounded MT Bold', sans-serif">
+                          <h1
+                            class="ml-3 align-center"
+                            style="
+                              font-family: 'Arial Rounded MT Bold', sans-serif;
+                            "
+                          >
                             {{ note.properties.text }}
                           </h1>
                         </v-col>
@@ -107,13 +114,7 @@
                           <router-link
                             style="text-decoration: none"
                             :to="'/note/' + note._id"
-                            ><v-btn
-                              color="white"
-                              dark
-                              outlined
-                              small
-                              fab
-                            >
+                            ><v-btn color="white" dark outlined small fab>
                               <v-icon> mdi-chevron-right </v-icon>
                             </v-btn>
                           </router-link>
