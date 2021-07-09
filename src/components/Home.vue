@@ -1,27 +1,130 @@
 <template>
   <div>
     <v-container>
-      <v-row>
-        <v-col cols="9">
-          <v-text-field
-            class="mt-4"
-            v-model="note_title"
-            label="Note title"
-          ></v-text-field>
-        </v-col>
-        <v-col class="justify-center">
-          <v-btn @click="createNote()"> Nueva nota </v-btn>
+      <v-row align="center" justify="center">
+        <v-col cols="5">
+          <v-card color="indigo darken-5" dark class="rounded-xl">
+            <v-container fluid>
+              <v-row align="center" justify="center">
+                <v-col cols="9">
+                  <v-text-field
+                    class="ml-4"
+                    v-model="note_title"
+                    label="Note title"
+                  ></v-text-field>
+                </v-col>
+                <v-col class="justify-center">
+                  <div class="text-center">
+                    <v-btn outlined color="white" @click="createNote()">
+                      New note
+                    </v-btn>
+                  </div>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card>
         </v-col>
       </v-row>
-    </v-container>
-    <v-container>
-      <v-row v-for="note in notes" :key="note.properties.text">
-        <v-col>
-          <router-link :to="'/note/' + note._id">
-            <v-card>
-              <h1>{{ note.properties.text }}</h1>
-            </v-card>
-          </router-link>
+      <v-row justify="center">
+        <v-col cols="6" class="pl-0">
+          <span v-if="notes.length === 0">
+            <v-divider></v-divider>
+            <h1 class="indigo--text darken-5 text-center">
+              You haven't created a note yet. To create one insert a title and
+              click on the new note button.
+            </h1>
+          </span>
+
+          <v-card
+            color="indigo darken-5"
+            dark
+            class="rounded-xl"
+            v-if="notes.length !== 0"
+          >
+            <v-dialog v-model="dialog" width="500" v-if="note">
+              <v-sheet
+                class="px-7 pt-7 pb-4 mx-auto text-center d-inline-block"
+                color="blue-grey darken-3"
+                dark
+              >
+                <div class="grey--text text--lighten-1 text-body-2 mb-4">
+                  Are you sure you want to delete:
+                  {{ note.text }}
+                </div>
+
+                <v-btn
+                  :disabled="loading"
+                  class="ma-1"
+                  color="grey"
+                  plain
+                  @click.stop="closingWarningDialog()"
+                >
+                  Cancel
+                </v-btn>
+
+                <v-btn
+                  :loading="loading"
+                  class="ma-1"
+                  color="error"
+                  plain
+                  @click="deleteNote()"
+                >
+                  Delete
+                </v-btn>
+              </v-sheet>
+            </v-dialog>
+            <v-container fluid>
+              <v-row v-for="note in notes" :key="note.properties.text">
+                <v-col class="pa-2">
+                  <v-card
+                    color="indigo lighten-1"
+                    elevation="4"
+                    class="rounded-xl"
+                  >
+                    <v-container>
+                      <v-row justify="center" align="center">
+                        <v-col cols="1">
+                          <v-btn
+                            color="red darken-4"
+                            dark
+                            outlined
+                            small
+                            fab
+                            @click.stop="
+                              openWarningDialog(note)
+                            "
+                          >
+                            <v-icon>mdi-close</v-icon>
+                          </v-btn>
+                        </v-col>
+                        <v-col cols="10">
+                          <h1 class="ml-3 align-center" style="font-family: 'Arial Rounded MT Bold', sans-serif">
+                            {{ note.properties.text }}
+                          </h1>
+                        </v-col>
+
+                        <v-col cols="1">
+                          <router-link
+                            style="text-decoration: none"
+                            :to="'/note/' + note._id"
+                            ><v-btn
+                              color="white"
+                              dark
+                              outlined
+                              small
+                              fab
+                            >
+                              <v-icon> mdi-chevron-right </v-icon>
+                            </v-btn>
+                          </router-link>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card>
         </v-col>
       </v-row>
     </v-container>
@@ -34,6 +137,9 @@ export default {
   data() {
     return {
       note_title: null,
+      dialog: false,
+      note: null,
+      loading: false,
     };
   },
   pouch: {
@@ -64,7 +170,7 @@ export default {
         parent: null,
       };
       this.$pouch
-        .put(note, {}, "http://localhost:5984/" + this.$store.state.user.db)
+        .put(note, {}, this.$store.state.user.db.url)
         .then((doc) => {
           console.log(doc);
           this.$router.push({ name: "Note", params: { note_id: doc.id } });
@@ -72,6 +178,33 @@ export default {
         .catch((err) => {
           console.log(err);
         });
+    },
+    deleteNote() {
+      console.log(this.note_id);
+      this.loading = true;
+      this.$pouch
+        .remove(this.note, {}, this.$store.state.user.db.url)
+        .then(() => {
+          this.dialog = false;
+          this.note_warning = null;
+          this.note_id = null;
+          this.loading = false;
+        })
+        .catch((err) => {
+          console.log(err);
+          this.dialog = false;
+          this.note_warning = null;
+          this.note_id = null;
+          this.loading = false;
+        });
+    },
+    openWarningDialog(note) {
+      this.note = note;
+      this.dialog = true;
+    },
+    closingWarningDialog() {
+      this.dialog = false;
+      this.note = null;
     },
   },
 };

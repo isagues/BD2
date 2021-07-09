@@ -1,30 +1,53 @@
 <template>
-  <div class="d-flex align-items-center justify-content-center">
+  <div>
     <v-container>
-      <v-row class="title" aling="center" justify="center">Login</v-row>
-      <v-row aling="center" justify="center">
-        <v-col
-          cols="12"
-          lg="6"
-          md="6"
-          class="fill-height d-flex flex-column justify-center align-center"
-        >
-          <v-btn><router-link to="/home">home</router-link></v-btn>
-          <v-card elevation="2" shaped tile>
-            <div class="ml-4 mr-4">
-              <v-text-field
-                class="mt-4"
-                label="Username"
-                v-model="username"
-                hide-details="auto"
-              ></v-text-field>
-              <v-text-field
-                class="mt-4"
-                v-model="password"
-                label="Password"
-              ></v-text-field>
-              <v-btn @click="connectToDatabase()"> Login </v-btn>
-            </div>
+      <v-row class="title" aling="center" justify="center">
+        <v-col>
+          <h1 class="text-center ma-5 indigo--text">Login to your database</h1>
+        </v-col>
+      </v-row>
+      <v-row justify="center">
+        <v-col cols="3">
+          <v-card elevation="8" color="indigo darken-5" dark class="rounded-xl mt-12">
+            <v-container fluid>
+              <v-row>
+                <v-col>
+                  <v-text-field
+                    class="mt-4"
+                    label="Username"
+                    v-model="username"
+                    hide-details="auto"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-text-field
+                    class="mt-4"
+                    :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                    :rules="[rules.required]"
+                    :type="show1 ? 'text' : 'password'"
+                    v-model="password"
+                    label="Password"
+                    @click:append="show1 = !show1"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row justify="center">
+                <v-col>
+                  <div class="text-center">
+                    <v-btn
+                      outlined
+                      color="white"
+                      large
+                      @click="connectToDatabase()"
+                    >
+                      Login
+                    </v-btn>
+                  </div>
+                </v-col>
+              </v-row>
+            </v-container>
           </v-card>
         </v-col>
       </v-row>
@@ -46,6 +69,10 @@ export default {
     return {
       username: null,
       password: null,
+      show1: false,
+      rules: {
+        required: (value) => !!value || "Required.",
+      },
     };
   },
   mounted() {
