@@ -49,7 +49,7 @@
                 <v-col>
                   <v-text-field
                     class="ml-4"
-                    v-model="note_content_text"
+                    v-model="note_edit_text"
                     label="New Content"
                   ></v-text-field>
                 </v-col>
@@ -81,8 +81,8 @@
             </v-container>
           </v-sheet>
         </v-dialog>
-        <v-btn icon color="indigo">
-          <v-icon>mdi-plus </v-icon>
+        <v-btn icon color="indigo" @click="add_dialog = true">
+          <v-icon>mdi-plus</v-icon>
         </v-btn>
         <v-btn icon color="red" @click="delete_dialog = true">
           <v-icon>mdi-delete</v-icon>
@@ -133,6 +133,53 @@
         </div>
       </v-col>
     </v-row>
+    <v-dialog v-model="add_dialog" width="500">
+      <v-card>
+        <v-card-title class="text-h5 grey lighten-2">
+          Add new note component
+        </v-card-title>
+        <v-container>
+          <v-row aling="center">
+            <v-col>
+              <div class="mb-4">Select Note Type:</div>
+              <div>
+                <v-select :items="items" v-model="type"></v-select>
+              </div>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-text-field
+              class="mt-4"
+              label="Note"
+              v-model="new_text"
+              hide-details="auto"
+            ></v-text-field>
+          </v-row>
+        </v-container>
+        <v-card-text> </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="putNote(type)"> DONE </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-row v-if="!NoteComponent.parent">
+      <v-col>
+        <div class="text-center">
+          <v-btn
+            class="mt-4 white--text"
+            color="indigo darken-5"
+            v-bind="attrs"
+            v-on="on"
+            fab
+            outlined
+            @click="add_dialog = true"
+            ><v-icon> mdi-plus </v-icon>
+          </v-btn>
+        </div>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 <script>
@@ -149,8 +196,11 @@ export default {
       completed: true,
       delete_dialog: false,
       edit_dialog: false,
-      note_content_text: null,
+      add_dialog: false,
+      new_text: null,
+      note_edit_text: null,
       loading: false,
+      items: ["Bullet List", "Check List", "Title", "Paragraph"],
     };
   },
   pouch: {
@@ -197,6 +247,149 @@ export default {
           console.log(err);
         });
     },
+    putNote(type) {
+      let new_id;
+      if (type === "Bullet List") {
+        new_id = this.putBullet();
+      } else if (type === "Check List") {
+        new_id = this.putNewCheck();
+      } else if (type === "Paragraph") {
+        new_id = this.putParagraph();
+      } else if (type === "Title") {
+        new_id = this.putTitle();
+      }
+      this.updateParent(new_id);
+    },
+
+    putBullet() {
+      let note = {
+        _id: new Date().toISOString(),
+        type: "bullet",
+        text: this.new_text,
+        properties: {
+          icon: "circle",
+          content: [],
+        },
+        parent: this.$route.params.note_id,
+      };
+      this.$pouch
+        .put(note, {}, this.$store.state.user.db.name)
+        .then((doc) => {
+          console.log(doc);
+          this.new_text = null;
+          this.add_dialog = false;
+        })
+        .catch((err) => {
+          console.log(err);
+          this.new_text = null;
+          this.add_dialog = false;
+        });
+      return note._id;
+    },
+    putNewCheck() {
+      let note = {
+        _id: new Date().toISOString(),
+        type: "check",
+        text: this.new_text,
+        properties: {
+          completed: false,
+          content: [],
+        },
+        parent: this.$route.params.note_id,
+      };
+      console.log("newcheck", note);
+      this.$pouch
+        .put(note, {}, this.$store.state.user.db.name)
+        .then((doc) => {
+          console.log(doc);
+          this.new_text = null;
+          this.add_dialog = false;
+        })
+        .catch((err) => {
+          console.log(err);
+          this.new_text = null;
+          this.add_dialog = false;
+        });
+      return note._id;
+    },
+
+    putTitle() {
+      let note = {
+        _id: new Date().toISOString(),
+        type: "title",
+        text: this.new_text,
+        properties: {
+          content: [],
+        },
+        parent: this.$route.params.note_id,
+      };
+      this.$pouch
+        .put(note, {}, this.$store.state.user.db.name)
+        .then((doc) => {
+          console.log(doc);
+          this.new_text = null;
+          this.add_dialog = false;
+        })
+        .catch((err) => {
+          console.log(err);
+          this.new_text = null;
+          this.add_dialog = false;
+        });
+      return note._id;
+    },
+
+    putParagraph() {
+      let note = {
+        _id: new Date().toISOString(),
+        type: "paragraph",
+        text: this.new_text,
+        properties: {
+          content: [],
+        },
+        parent: this.$route.params.note_id,
+      };
+      this.$pouch
+        .put(note, {}, this.$store.state.user.db.name)
+        .then((doc) => {
+          console.log(doc);
+          this.new_text = null;
+          this.add_dialog = false;
+        })
+        .catch((err) => {
+          console.log(err);
+          this.new_text = null;
+          this.add_dialog = false;
+        });
+      return note._id;
+    },
+
+    updateParent(child_id) {
+      let properties = this.NoteComponent.properties;
+      let new_content = this.NoteComponent.properties.content;
+      new_content.push(child_id);
+      properties.content = new_content;
+
+      let updated_note = {
+        _id: this.NoteComponent._id,
+        _rev: this.NoteComponent._rev,
+        type: this.NoteComponent.type,
+        text: this.NoteComponent.text,
+        properties: properties,
+        parent: this.NoteComponent.parent,
+      };
+      console.log("nota updeteandoseeeee", updated_note);
+      this.$pouch
+        .put(updated_note, {}, this.$store.state.user.db.name)
+        .then((doc) => {
+          console.log("UPDATED PARENT");
+          console.log(this.note);
+          console.log(doc);
+        })
+        .catch((err) => {
+          console.log("estamos n st rror");
+          console.log(err);
+        });
+    },
     deleteComponent() {
       this.loading = true;
       this.$pouch
@@ -219,7 +412,7 @@ export default {
             _id: this.NoteComponent._id,
             _rev: this.NoteComponent._rev,
             type: this.NoteComponent.type,
-            text: this.note_content_text,
+            text: this.note_edit_text,
             properties: this.NoteComponent.properties,
             parent: this.NoteComponent.parent,
           },
@@ -228,13 +421,13 @@ export default {
         )
         .then(() => {
           this.edit_dialog = false;
-          this.note_content_text = null;
+          this.note_edit_text = null;
           this.loading = false;
         })
         .catch((err) => {
           console.log(err);
           this.delete_dialog = false;
-          this.note_content_text = null;
+          this.note_edit_text = null;
           this.loading = false;
         });
     },
