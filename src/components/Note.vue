@@ -55,6 +55,12 @@
             </v-card>
           </v-dialog>
         </div>
+        <div class="text-center">
+          <h1 class="ml-2 text-center">
+            {{ note.text }}
+          </h1>
+          <v-divider></v-divider>
+        </div>
         <!-- NOTA PADRE -->
         <note-component :id="note._id"></note-component>
       </v-app>
@@ -112,13 +118,13 @@ export default {
     },
     putNote(type) {
       let new_id;
-      if (type == "Bullet List") {
+      if (type === "Bullet List") {
         new_id = this.putBullet();
-      } else if (type == "Check List") {
+      } else if (type === "Check List") {
         new_id = this.putCheck();
-      } else if (type == "Paragraph") {
+      } else if (type === "Paragraph") {
         new_id = this.putParagraph();
-      } else if (type == "Title") {
+      } else if (type === "Title") {
         new_id = this.putTitle();
       }
       this.updateParent(new_id);
@@ -128,8 +134,8 @@ export default {
       let note = {
         _id: new Date().toISOString(),
         type: "bullet",
+        text: this.new_text,
         properties: {
-          text: this.new_text,
           icon: "circle",
           content: [],
         },
@@ -139,6 +145,7 @@ export default {
         .put(note, {}, this.$store.state.user.db.name)
         .then((doc) => {
           console.log(doc);
+          this.new_text = null;
           this.dialog = false;
         })
         .catch((err) => {
@@ -151,8 +158,8 @@ export default {
       let note = {
         _id: new Date().toISOString(),
         type: "check",
+        text: this.new_text,
         properties: {
-          text: this.new_text,
           completed: false,
           content: [],
         },
@@ -162,6 +169,7 @@ export default {
         .put(note, {}, this.$store.state.user.db.name)
         .then((doc) => {
           console.log(doc);
+          this.new_text = null;
           this.dialog = false;
         })
         .catch((err) => {
@@ -174,8 +182,8 @@ export default {
       let note = {
         _id: new Date().toISOString(),
         type: "title",
+        text: this.new_text,
         properties: {
-          text: this.new_text,
           content: [],
         },
         parent: this.$route.params.note_id,
@@ -184,6 +192,7 @@ export default {
         .put(note, {}, this.$store.state.user.db.name)
         .then((doc) => {
           console.log(doc);
+          this.new_text = null;
           this.dialog = false;
         })
         .catch((err) => {
@@ -196,8 +205,8 @@ export default {
       let note = {
         _id: new Date().toISOString(),
         type: "paragraph",
+        text: this.new_text,
         properties: {
-          text: this.new_text,
           content: [],
         },
         parent: this.$route.params.note_id,
@@ -206,6 +215,7 @@ export default {
         .put(note, {}, this.$store.state.user.db.name)
         .then((doc) => {
           console.log(doc);
+          this.new_text = null;
           this.dialog = false;
         })
         .catch((err) => {
@@ -222,8 +232,8 @@ export default {
         _id: this.$route.params.note_id,
         _rev: this.note._rev,
         type: this.note.type,
+        text: this.note.text,
         properties: {
-          text: this.note.properties.text,
           content: new_content,
         },
         parent: this.note.parent,

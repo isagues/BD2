@@ -53,7 +53,7 @@
               >
                 <div class="grey--text text--lighten-1 text-body-2 mb-4">
                   Are you sure you want to delete:
-                  {{ note_selected.properties.text }}
+                  {{ note_selected.text }}
                 </div>
 
                 <v-btn
@@ -78,7 +78,7 @@
               </v-sheet>
             </v-dialog>
             <v-container fluid>
-              <v-row v-for="note in notes" :key="note.properties.text">
+              <v-row v-for="note in notes" :key="note.text">
                 <v-col class="pa-2">
                   <v-card
                     color="indigo lighten-1"
@@ -106,7 +106,7 @@
                               font-family: 'Arial Rounded MT Bold', sans-serif;
                             "
                           >
-                            {{ note.properties.text }}
+                            {{ note.text }}
                           </h1>
                         </v-col>
 
@@ -161,17 +161,20 @@ export default {
   },
   methods: {
     logOut() {
-        this.$pouch.disconnect(this.$store.state.user.db.url).then(console.log).catch(console.log);
-        this.$store.commit('disconnect');
-        this.$router.push("/");
+      this.$pouch
+        .disconnect(this.$store.state.user.db.url)
+        .then(console.log)
+        .catch(console.log);
+      this.$store.commit("disconnect");
+      this.$router.push("/");
     },
 
     createNote() {
       let note = {
         _id: new Date().toISOString(),
         type: "page",
+        text: this.note_title,
         properties: {
-          text: this.note_title,
           content: [],
         },
         parent: null,
