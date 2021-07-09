@@ -2,14 +2,53 @@
   <body>
     <div id="app" class="d-flex align-items-center justify-content-center">
       <v-app>
-        <v-container>
-          <v-row aling="center">
-            <v-col>
-              <div class="mb-4">Select Note Type:</div>
-              <div><v-select :items="items"></v-select></div>
-            </v-col>
-          </v-row>
-        </v-container>
+        <div class="text-center">
+          <v-dialog v-model="dialog" width="500">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn color="red lighten-2" dark v-bind="attrs" v-on="on">
+                EDIT NOTE
+              </v-btn>
+            </template>
+
+            <v-card>
+              <v-card-title class="text-h5 grey lighten-2">
+                Edit Note
+              </v-card-title>
+              <v-container>
+                <v-row aling="center">
+                  <v-col>
+                    <div class="mb-4">Select Note Type:</div>
+                    <div>
+                      <v-select
+                        :items="items"
+                        v-model="type"
+                        @change="showParams(type)"
+                      ></v-select>
+                    </div>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-text-field
+                    class="mt-4"
+                    label="Note"
+                    v-model="new_text"
+                    hide-details="auto"
+                  ></v-text-field>
+                </v-row>
+              </v-container>
+              <v-card-text> </v-card-text>
+
+              <v-divider></v-divider>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" text @click="putNote(type)">
+                  DONE
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </div>
         <v-container>
           <v-row aling="center" v-if="note">
             <v-col>
@@ -28,6 +67,10 @@ export default {
   data() {
     return {
       items: ["Bullet List", "Check List", "Title", "Paragraph"],
+      dialog: false,
+      check_completed: false,
+      bullet_icon: false,
+      new_text: null,
     };
   },
   pouch: {
@@ -52,6 +95,78 @@ export default {
     //   .catch(function (err) {
     //     console.log(err);
     //   });
+  },
+  methods: {
+    showParams(type) {
+      if (type === "Bullet List") {
+        this.bullet_icon = true;
+      } else if (type === "Check List") {
+        this.check_completed = true;
+      }
+    },
+    putNote(type) {
+      let new_id;
+      if (type == "Bullet List") {
+        new_id = this.putBullet();
+      }
+      console.log("antes de update");
+      console.log(new_id);
+      this.updateParent(new_id);
+    },
+
+    putBullet() {
+      let note = {
+        _id: new Date().toISOString(),
+        type: "bullet",
+        properties: {
+          text: this.new_text,
+          icon: "circle",
+          content: [],
+        },
+        parent: this.$route.params.note_id,
+      };
+      this.$pouch
+        .put(note, {}, "http://localhost:5984/" + this.$store.state.user.db)
+        .then((doc) => {
+          console.log(doc);
+          this.dialog = false;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      return note._id;
+    },
+
+    updateParent(child_id) {
+      let new_content = this.note.properties.content;
+      new_content.push(child_id);
+
+      let updated_note = {
+        _id: this.$route.params.note_id,
+        _rev: this.note._rev,
+        type: this.note.type,
+        properties: {
+          text: this.note.properties.text,
+          content: new_content,
+        },
+        parent: this.note.parent,
+      };
+      console.log(updated_note);
+      this.$pouch
+        .put(
+          updated_note,
+          {},
+          "http://localhost:5984/" + this.$store.state.user.db
+        )
+        .then((doc) => {
+          console.log("UPDATED PARENT");
+          console.log(this.note);
+          console.log(doc);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
   },
 };
 </script>
