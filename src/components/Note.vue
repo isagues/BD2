@@ -1,12 +1,18 @@
 <template>
   <body>
-    <div id="app" class="d-flex align-items-center justify-content-center">
+    <div id="app">
       <v-app>
         <div class="text-center">
           <v-dialog v-model="dialog" width="500">
             <template v-slot:activator="{ on, attrs }">
-              <v-btn fab color="indigo darken-5" v-bind="attrs" v-on="on">
-                <v-icon color="white">mdi-pencil</v-icon>
+              <v-btn
+                class="mt-4 white--text"
+                color="indigo darken-5"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <!--<v-icon color="white">mdi-pencil</v-icon>-->
+                EDIT NOTE
               </v-btn>
             </template>
 
@@ -49,7 +55,7 @@
             </v-card>
           </v-dialog>
         </div>
-        <!-- NOTA PADRE --> 
+        <!-- NOTA PADRE -->
         <note-component :id="note._id"></note-component>
       </v-app>
     </div>

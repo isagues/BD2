@@ -1,15 +1,21 @@
 <template>
-  <v-container>
+  <v-container class="parent">
     <v-row aling="center">
       <v-col>
-        <h1 v-if="NoteComponent.type === 'page'">
+        <h1 class="ml-2 text-center" v-if="NoteComponent.type === 'page'">
           {{ NoteComponent.properties.text }}
         </h1>
-        <div v-if="NoteComponent.type !== 'page'">
-          <span v-if="NoteComponent.type === 'bullet'">
-            <v-icon small>mdi-checkbox-blank-circle</v-icon></span
+
+        <h3 class="ml-2" v-if="NoteComponent.type === 'title'">
+          {{ NoteComponent.properties.text }}
+        </h3>
+        <div
+          v-if="NoteComponent.type !== 'page' && NoteComponent.type !== 'title'"
+        >
+          <span class="ml-2" v-if="NoteComponent.type === 'bullet'">
+            <v-icon x-small>mdi-checkbox-blank-circle</v-icon></span
           >
-          <span v-if="NoteComponent.type === 'check'">
+          <span class="ml-0" v-if="NoteComponent.type === 'check'">
             <v-btn icon @click="completeCheck()">
               <v-icon v-if="!NoteComponent.properties.completed" medium
                 >mdi-checkbox-blank-outline</v-icon
@@ -31,7 +37,7 @@
       v-for="content in NoteComponent.properties.content"
       :key="content"
     >
-      <div>
+      <div class="child">
         <note-component :id="content"></note-component>
       </div>
     </v-row>
