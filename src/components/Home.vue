@@ -148,7 +148,7 @@ export default {
     notes() {
       return {
         database: this.$store.state.user.db.name, // you can pass a database string or a pouchdb instance
-        selector: {},
+        selector: {/*parent: {$eq: null}, type: {$eq: 'page'}*/},
       };
     },
   },
