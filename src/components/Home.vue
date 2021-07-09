@@ -40,7 +40,7 @@ export default {
     // The simplest usage. queries all documents from the "todos" pouch database and assigns them to the "todos" vue property.
     notes() {
       return {
-        database: this.$store.state.user.db, // you can pass a database string or a pouchdb instance
+        database: this.$store.state.user.db.name, // you can pass a database string or a pouchdb instance
         selector: {},
       };
     },
@@ -48,8 +48,8 @@ export default {
   created() {
     // Send all documents to the remote database, and stream changes in real-time
     this.$pouch.sync(
-      this.$store.state.user.db,
-      "http://localhost:5984/" + this.$store.state.user.db
+      this.$store.state.user.db.name,
+      this.$store.state.user.db.url
     );
   },
   methods: {

@@ -48,12 +48,28 @@ export default {
       password: null,
     };
   },
+  mounted() {
+      console.log("MOUNTED");
+      this.$pouch.getSession().then((data) => {
+        console.log(data);  
+        if (data.status === 0) {
+            console.log('most likely offline');
+            return;
+        }
+
+        if (!data.user || !data.hasAccess) {
+            return;
+        }
+        this.$router.push("/home");
+      }).catch(console.log);
+  },
   methods: {
     connectToDatabase() {
       let database = "userdb-" + String2Hex(this.username);
+      let dbURL = "http://localhost:5984/" + database;
       console.log(database);
       this.$pouch
-        .connect(this.username, this.password, database)
+        .connect(this.username, this.password, dbURL)
         .then((res) => {
           let isUnauthorized = res.error === "unauthorized",
             isOffline = res.status === 0;
@@ -63,7 +79,7 @@ export default {
           if (isUnauthorized) {
             return;
           }
-          this.$store.commit("insert", { name: this.username, db: database});
+          this.$store.commit("insert", { name: this.username, db: {name: database, url: dbURL}});
           this.$router.push("/home");
         })
         .catch((error) => {

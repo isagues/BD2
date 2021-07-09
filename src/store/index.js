@@ -6,14 +6,21 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     user: {
-      name: null,
-      db: null,
+      name: localStorage.getItem('user-name'),
+      db: {
+          name: localStorage.getItem('user-db-name'),
+          url: localStorage.getItem('user-db-url')
+      }
     },
   },
   mutations: {
     insert(state, payload) {
       state.user.name = payload.name;
-      state.user.db = payload.db;
+      state.user.db.name  = payload.db.name;
+      state.user.db.url   = payload.db.urll;
+      localStorage.setItem('user-name', state.user.name);
+      localStorage.setItem('user-db-name', state.user.db.name);
+      localStorage.setItem('user-db-url', state.user.db.url);
     },
   },
   actions: {},
