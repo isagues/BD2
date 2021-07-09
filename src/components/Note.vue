@@ -5,8 +5,8 @@
         <div class="text-center">
           <v-dialog v-model="dialog" width="500">
             <template v-slot:activator="{ on, attrs }">
-              <v-btn color="red lighten-2" dark v-bind="attrs" v-on="on">
-                EDIT NOTE
+              <v-btn fab color="indigo darken-5" v-bind="attrs" v-on="on">
+                <v-icon color="white">mdi-pencil</v-icon>
               </v-btn>
             </template>
 
@@ -49,21 +49,21 @@
             </v-card>
           </v-dialog>
         </div>
-        <v-container>
-          <v-row aling="center" v-if="note">
-            <v-col>
-              <h1>{{ note.properties.text }}</h1>
-            </v-col>
-          </v-row>
-        </v-container>
+        <!-- NOTA PADRE --> 
+        <note-component :id="note._id"></note-component>
       </v-app>
     </div>
   </body>
 </template>
 
 <script>
+import NoteComponent from "./NoteComponent";
+
 export default {
   name: "Note",
+  components: {
+    NoteComponent,
+  },
   data() {
     return {
       items: ["Bullet List", "Check List", "Title", "Paragraph"],
@@ -130,7 +130,7 @@ export default {
         parent: this.$route.params.note_id,
       };
       this.$pouch
-        .put(note, {}, this.$store.state.user.db.url)
+        .put(note, {}, this.$store.state.user.db.name)
         .then((doc) => {
           console.log(doc);
           this.dialog = false;
@@ -153,7 +153,7 @@ export default {
         parent: this.$route.params.note_id,
       };
       this.$pouch
-        .put(note, {}, this.$store.state.user.db.url)
+        .put(note, {}, this.$store.state.user.db.name)
         .then((doc) => {
           console.log(doc);
           this.dialog = false;
@@ -175,7 +175,7 @@ export default {
         parent: this.$route.params.note_id,
       };
       this.$pouch
-        .put(note, {}, this.$store.state.user.db.url)
+        .put(note, {}, this.$store.state.user.db.name)
         .then((doc) => {
           console.log(doc);
           this.dialog = false;
@@ -197,7 +197,7 @@ export default {
         parent: this.$route.params.note_id,
       };
       this.$pouch
-        .put(note, {}, this.$store.state.user.db.url)
+        .put(note, {}, this.$store.state.user.db.name)
         .then((doc) => {
           console.log(doc);
           this.dialog = false;
@@ -224,7 +224,7 @@ export default {
       };
       console.log(updated_note);
       this.$pouch
-        .put(updated_note, {}, this.$store.state.user.db.url)
+        .put(updated_note, {}, this.$store.state.user.db.name)
         .then((doc) => {
           console.log("UPDATED PARENT");
           console.log(this.note);
