@@ -108,9 +108,13 @@ export default {
       let new_id;
       if (type == "Bullet List") {
         new_id = this.putBullet();
+      } else if (type == "Check List") {
+        new_id = this.putCheck();
+      } else if (type == "Paragraph") {
+        new_id = this.putParagraph();
+      } else if (type == "Title") {
+        new_id = this.putTitle();
       }
-      console.log("antes de update");
-      console.log(new_id);
       this.updateParent(new_id);
     },
 
@@ -121,6 +125,73 @@ export default {
         properties: {
           text: this.new_text,
           icon: "circle",
+          content: [],
+        },
+        parent: this.$route.params.note_id,
+      };
+      this.$pouch
+        .put(note, {}, "http://localhost:5984/" + this.$store.state.user.db)
+        .then((doc) => {
+          console.log(doc);
+          this.dialog = false;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      return note._id;
+    },
+
+    putCheck() {
+      let note = {
+        _id: new Date().toISOString(),
+        type: "check",
+        properties: {
+          text: this.new_text,
+          completed: false,
+          content: [],
+        },
+        parent: this.$route.params.note_id,
+      };
+      this.$pouch
+        .put(note, {}, "http://localhost:5984/" + this.$store.state.user.db)
+        .then((doc) => {
+          console.log(doc);
+          this.dialog = false;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      return note._id;
+    },
+
+    putTitle() {
+      let note = {
+        _id: new Date().toISOString(),
+        type: "title",
+        properties: {
+          text: this.new_text,
+          content: [],
+        },
+        parent: this.$route.params.note_id,
+      };
+      this.$pouch
+        .put(note, {}, "http://localhost:5984/" + this.$store.state.user.db)
+        .then((doc) => {
+          console.log(doc);
+          this.dialog = false;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      return note._id;
+    },
+
+    putParagraph() {
+      let note = {
+        _id: new Date().toISOString(),
+        type: "paragraph",
+        properties: {
+          text: this.new_text,
           content: [],
         },
         parent: this.$route.params.note_id,
