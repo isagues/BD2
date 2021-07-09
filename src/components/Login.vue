@@ -49,19 +49,22 @@ export default {
     };
   },
   mounted() {
-      console.log("MOUNTED");
-      this.$pouch.getSession().then((data) => {
-        console.log(data);  
+    console.log("MOUNTED");
+    this.$pouch
+      .getSession()
+      .then((data) => {
+        console.log(data);
         if (data.status === 0) {
-            console.log('most likely offline');
-            return;
+          console.log("most likely offline");
+          return;
         }
 
         if (!data.user || !data.hasAccess) {
-            return;
+          return;
         }
         this.$router.push("/home");
-      }).catch(console.log);
+      })
+      .catch(console.log);
   },
   methods: {
     connectToDatabase() {
@@ -79,7 +82,10 @@ export default {
           if (isUnauthorized) {
             return;
           }
-          this.$store.commit("insert", { name: this.username, db: {name: database, url: dbURL}});
+          this.$store.commit("insert", {
+            name: this.username,
+            db: { name: database, url: dbURL },
+          });
           this.$router.push("/home");
         })
         .catch((error) => {

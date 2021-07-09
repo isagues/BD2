@@ -77,7 +77,7 @@ export default {
     // The simplest usage. queries all documents from the "todos" pouch database and assigns them to the "todos" vue property.
     note() {
       return {
-        database: this.$store.state.user.db,
+        database: this.$store.state.user.db.name,
         selector: { _id: this.$route.params.note_id },
         first: true,
       };
@@ -130,7 +130,7 @@ export default {
         parent: this.$route.params.note_id,
       };
       this.$pouch
-        .put(note, {}, "http://localhost:5984/" + this.$store.state.user.db)
+        .put(note, {}, this.$store.state.user.db.url)
         .then((doc) => {
           console.log(doc);
           this.dialog = false;
@@ -153,7 +153,7 @@ export default {
         parent: this.$route.params.note_id,
       };
       this.$pouch
-        .put(note, {}, "http://localhost:5984/" + this.$store.state.user.db)
+        .put(note, {}, this.$store.state.user.db.url)
         .then((doc) => {
           console.log(doc);
           this.dialog = false;
@@ -175,7 +175,7 @@ export default {
         parent: this.$route.params.note_id,
       };
       this.$pouch
-        .put(note, {}, "http://localhost:5984/" + this.$store.state.user.db)
+        .put(note, {}, this.$store.state.user.db.url)
         .then((doc) => {
           console.log(doc);
           this.dialog = false;
@@ -197,7 +197,7 @@ export default {
         parent: this.$route.params.note_id,
       };
       this.$pouch
-        .put(note, {}, "http://localhost:5984/" + this.$store.state.user.db)
+        .put(note, {}, this.$store.state.user.db.url)
         .then((doc) => {
           console.log(doc);
           this.dialog = false;
@@ -224,11 +224,7 @@ export default {
       };
       console.log(updated_note);
       this.$pouch
-        .put(
-          updated_note,
-          {},
-          "http://localhost:5984/" + this.$store.state.user.db
-        )
+        .put(updated_note, {}, this.$store.state.user.db.url)
         .then((doc) => {
           console.log("UPDATED PARENT");
           console.log(this.note);
