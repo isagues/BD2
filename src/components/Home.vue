@@ -25,7 +25,7 @@
           </v-card>
         </v-col>
       </v-row>
-      <v-row justify="center">
+      <v-row justify="center" v-if="notes">
         <v-col cols="6" class="pl-0">
           <span v-if="notes.length === 0">
             <v-divider></v-divider>
@@ -41,7 +41,7 @@
             class="rounded-xl"
             v-if="notes.length !== 0"
           >
-            <v-dialog v-model="dialog" width="500" v-if="note">
+            <v-dialog v-model="dialog" width="500" v-if="note_selected">
               <v-sheet
                 class="px-7 pt-7 pb-4 mx-auto text-center d-inline-block"
                 color="blue-grey darken-3"
@@ -49,7 +49,7 @@
               >
                 <div class="grey--text text--lighten-1 text-body-2 mb-4">
                   Are you sure you want to delete:
-                  {{ note.text }}
+                  {{ note_selected.properties.text }}
                 </div>
 
                 <v-btn
@@ -138,7 +138,7 @@ export default {
     return {
       note_title: null,
       dialog: false,
-      note: null,
+      note_selected: null,
       loading: false,
     };
   },
@@ -183,28 +183,25 @@ export default {
       console.log(this.note_id);
       this.loading = true;
       this.$pouch
-        .remove(this.note, {}, this.$store.state.user.db.url)
+        .remove(this.note_selected, {}, this.$store.state.user.db.url)
         .then(() => {
           this.dialog = false;
-          this.note_warning = null;
-          this.note_id = null;
+          this.note_selected = false;
           this.loading = false;
         })
         .catch((err) => {
           console.log(err);
           this.dialog = false;
-          this.note_warning = null;
-          this.note_id = null;
           this.loading = false;
         });
     },
     openWarningDialog(note) {
-      this.note = note;
+      this.note_selected = note;
       this.dialog = true;
     },
     closingWarningDialog() {
       this.dialog = false;
-      this.note = null;
+      this.note_selected = null;
     },
   },
 };

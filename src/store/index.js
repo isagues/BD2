@@ -17,7 +17,7 @@ export default new Vuex.Store({
     insert(state, payload) {
       state.user.name = payload.name;
       state.user.db.name = payload.db.name;
-      state.user.db.url = payload.db.urll;
+      state.user.db.url = payload.db.url;
       localStorage.setItem("user-name", state.user.name);
       localStorage.setItem("user-db-name", state.user.db.name);
       localStorage.setItem("user-db-url", state.user.db.url);

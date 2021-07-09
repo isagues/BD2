@@ -15,7 +15,7 @@ PouchDB.plugin(PouchDBAuthentication);
 
 Vue.use(PouchVue, {
   pouch: PouchDB, // optional if `PouchDB` is available on the global object
-  defaultDB: localStorage.getItem('user-db-url') || 'Default Value', // this is used as a default connect/disconnect database
+  defaultDB: localStorage.getItem("user-db-url") || "Default Value", // this is used as a default connect/disconnect database
   optionDB: {}, // this is used to include a custom fetch() method (see TypeScript example
 });
 
