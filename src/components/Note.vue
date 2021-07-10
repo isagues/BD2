@@ -2,18 +2,20 @@
   <body>
     <div id="app">
       <v-app>
-        <div class="text-center mb-2 mt-2">
-          <h1 class="ml-2 text-center">
-            {{ note.text }}
-          </h1>
-          <v-row class="justify-center align-center">
-            <v-col cols="9">
-              <v-divider class="mb-4 mt-3"></v-divider>
-            </v-col>
-          </v-row>
+          <div v-if="note">
+            <div class="text-center mb-2 mt-2">
+              <h1 class="ml-2 text-center">
+                {{ note.text }}
+              </h1>
+              <v-row class="justify-center align-center">
+                <v-col cols="9">
+                  <v-divider class="mb-4 mt-3"></v-divider>
+                </v-col>
+              </v-row>
+            </div>
+            <!-- NOTA PADRE -->
+            <note-component :id="note._id"></note-component>
         </div>
-        <!-- NOTA PADRE -->
-        <note-component :id="note._id"></note-component>
       </v-app>
     </div>
   </body>

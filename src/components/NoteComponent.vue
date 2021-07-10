@@ -1,17 +1,16 @@
 <template>
   <v-container class="parent" v-if="NoteComponent">
-    <v-row aling="center" justify="center" v-if="NoteComponent.parent">
-      <v-col cols="9" class="ma-0 pa-0">
-        <h1
-          class="ml-2 text-center blue--text"
-          v-if="NoteComponent.type === 'page'"
-        >
+    <v-row aling="center" justify="center" v-if="NoteComponent._id !== $route.params.note_id">
+      <v-col class="ma-0 pa-0">
+        <h3 class="ml-2 text-break" v-if="NoteComponent.type === 'page'">
+            <router-link :to="'/note/' + NoteComponent._id">
           {{ NoteComponent.text }}
-        </h1>
-        <h3 class="ml-2" v-if="NoteComponent.type === 'title'">
+            </router-link>
+        </h3>
+        <h3 class="ml-2 text-break" v-if="NoteComponent.type === 'title'">
           {{ NoteComponent.text }}
         </h3>
-        <div
+        <div class="text-break"
           v-if="NoteComponent.type !== 'page' && NoteComponent.type !== 'title'"
         >
           <span class="ml-2" v-if="NoteComponent.type === 'bullet'">
@@ -34,7 +33,7 @@
         </div>
       </v-col>
 
-      <v-col align="end" cols="3" class="ma-0 pa-0">
+      <v-col align="end" cols="auto"  class="ma-0 pa-0">
         <v-btn icon color="indigo" @click="edit_dialog = true">
           <v-icon>mdi-pencil-outline</v-icon>
         </v-btn>
@@ -82,7 +81,7 @@
           </v-sheet>
         </v-dialog>
         <v-btn icon color="indigo" @click="add_dialog = true">
-          <v-icon>mdi-plus</v-icon>
+          <v-icon v-if="NoteComponent.type !== 'page'">mdi-plus</v-icon>
         </v-btn>
         <v-btn icon color="red" @click="delete_dialog = true">
           <v-icon>mdi-delete</v-icon>
@@ -121,18 +120,20 @@
         </v-dialog>
       </v-col>
     </v-row>
-    <v-row
-      aling="center"
-      justify="center"
-      v-for="content in NoteComponent.properties.content"
-      :key="content"
-    >
-      <v-col cols="9" class="ma-0 pa-0">
-        <div class="child">
-          <note-component :id="content"></note-component>
-        </div>
-      </v-col>
-    </v-row>
+    <div v-if="NoteComponent.type !== 'page' || NoteComponent._id === $route.params.note_id">
+        <v-row
+          aling="center"
+          v-for="content in NoteComponent.properties.content"
+          :key="content"
+        >
+          <v-spacer></v-spacer>
+          <v-col  cols="11" class="ma-0 pa-0">
+            <div class="child">
+              <note-component :id="content"></note-component>
+            </div>
+          </v-col>
+        </v-row>
+    </div>
     <v-dialog v-model="add_dialog" width="500">
       <v-card>
         <v-card-title class="text-h5 grey lighten-2">
@@ -172,14 +173,12 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-row v-if="!NoteComponent.parent">
+    <v-row v-if="NoteComponent.type === 'page' && NoteComponent._id === $route.params.note_id">
       <v-col>
         <div class="text-center">
           <v-btn
             class="mt-4 white--text"
             color="indigo darken-5"
-            v-bind="attrs"
-            v-on="on"
             fab
             outlined
             @click="add_dialog = true"
@@ -208,8 +207,9 @@ export default {
       new_text: null,
       note_edit_text: null,
       loading: false,
-      items: ["Bullet List", "Check List", "Title", "Paragraph"],
+      items: ["Bullet List", "Check List", "Title", "Paragraph", "Page"],
       show_empty_note_error: false,
+      type: "Title"
     };
   },
   pouch: {
@@ -266,6 +266,8 @@ export default {
           new_id = this.putParagraph();
         } else if (type === "Title") {
           new_id = this.putTitle();
+        } else if (type === "Page") {
+          new_id = this.putPage();
         }
         this.updateParent(new_id);
       } else {
@@ -375,6 +377,31 @@ export default {
       return note._id;
     },
 
+    putPage() {
+      let note = {
+        _id: new Date().toISOString(),
+        type: "page",
+        text: this.new_text,
+        properties: {
+          content: [],
+        },
+        parent: this.NoteComponent._id,
+      };
+      this.$pouch
+        .put(note, {}, this.$store.state.user.db.name)
+        .then((doc) => {
+          console.log(doc);
+          this.new_text = null;
+          this.add_dialog = false;
+          this.$router.push("/note/" + note._id);
+        })
+        .catch((err) => {
+          console.log(err);
+          this.new_text = null;
+          this.add_dialog = false;
+        });
+      return note._id;
+    },
     updateParent(child_id) {
       let properties = this.NoteComponent.properties;
       let new_content = this.NoteComponent.properties.content;
