@@ -1,7 +1,7 @@
 <template>
   <v-container class="parent" v-if="NoteComponent">
     <v-row aling="center" justify="center" v-if="NoteComponent.parent">
-      <v-col cols="5">
+      <v-col cols="9" class="ma-0 pa-0">
         <h1
           class="ml-2 text-center blue--text"
           v-if="NoteComponent.type === 'page'"
@@ -11,7 +11,7 @@
         <h3 class="ml-2" v-if="NoteComponent.type === 'title'">
           {{ NoteComponent.text }}
         </h3>
-        <div
+        <div 
           v-if="NoteComponent.type !== 'page' && NoteComponent.type !== 'title'"
         >
           <span class="ml-2" v-if="NoteComponent.type === 'bullet'">
@@ -34,7 +34,7 @@
         </div>
       </v-col>
 
-      <v-col align="end" cols="2">
+      <v-col align="end" cols="3" class="ma-0 pa-0">
         <v-btn icon color="indigo" @click="edit_dialog = true">
           <v-icon>mdi-pencil-outline</v-icon>
         </v-btn>
@@ -45,7 +45,7 @@
             dark
           >
             <v-container fluid>
-              <v-row>
+              <v-row >
                 <v-col>
                   <v-text-field
                     class="ml-4"
@@ -127,7 +127,7 @@
       v-for="content in NoteComponent.properties.content"
       :key="content"
     >
-      <v-col cols="9">
+      <v-col cols="9" class="ma-0 pa-0">
         <div class="child">
           <note-component :id="content"></note-component>
         </div>
@@ -215,8 +215,6 @@ export default {
   pouch: {
     // The simplest usage. queries all documents from the "todos" pouch database and assigns them to the "todos" vue property.
     NoteComponent() {
-      console.log("ID !!!!!");
-      console.log(this.id);
       return {
         database: this.$store.state.user.db.name,
         selector: { _id: this.id },
