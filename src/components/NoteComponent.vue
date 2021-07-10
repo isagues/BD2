@@ -143,22 +143,30 @@
             <v-col>
               <div class="mb-4">Select Note Type:</div>
               <div>
-                <v-select :items="items" v-model="type"></v-select>
+                <v-select
+                  :items="items"
+                  v-model="type"
+                  :rules="[(v) => !!v || 'Type is required']"
+                ></v-select>
               </div>
             </v-col>
           </v-row>
           <v-row>
             <v-text-field
-              class="mt-4"
+              class="mt-4 pl-3 pr-3"
               label="Note"
               v-model="new_text"
               hide-details="auto"
+              :rules="[(v) => !!v || 'Text is required']"
             ></v-text-field>
           </v-row>
         </v-container>
         <v-card-text> </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
+          <div v-if="show_empty_note_error" class="red--text">
+            Please insert a note
+          </div>
           <v-spacer></v-spacer>
           <v-btn color="primary" text @click="putNote(type)"> DONE </v-btn>
         </v-card-actions>
@@ -201,6 +209,7 @@ export default {
       note_edit_text: null,
       loading: false,
       items: ["Bullet List", "Check List", "Title", "Paragraph"],
+      show_empty_note_error: false,
     };
   },
   pouch: {
@@ -248,17 +257,22 @@ export default {
         });
     },
     putNote(type) {
-      let new_id;
-      if (type === "Bullet List") {
-        new_id = this.putBullet();
-      } else if (type === "Check List") {
-        new_id = this.putNewCheck();
-      } else if (type === "Paragraph") {
-        new_id = this.putParagraph();
-      } else if (type === "Title") {
-        new_id = this.putTitle();
+      if (this.new_text !== null && type !== undefined) {
+        this.show_empty_note_error = false;
+        let new_id;
+        if (type === "Bullet List") {
+          new_id = this.putBullet();
+        } else if (type === "Check List") {
+          new_id = this.putNewCheck();
+        } else if (type === "Paragraph") {
+          new_id = this.putParagraph();
+        } else if (type === "Title") {
+          new_id = this.putTitle();
+        }
+        this.updateParent(new_id);
+      } else {
+        this.show_empty_note_error = true;
       }
-      this.updateParent(new_id);
     },
 
     putBullet() {
