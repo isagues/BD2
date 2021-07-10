@@ -1,16 +1,21 @@
 <template>
   <v-container class="parent" v-if="NoteComponent">
-    <v-row aling="center" justify="center" v-if="NoteComponent._id !== $route.params.note_id">
+    <v-row
+      aling="center"
+      justify="center"
+      v-if="NoteComponent._id !== $route.params.note_id"
+    >
       <v-col class="ma-0 pa-0">
         <h3 class="ml-2 text-break" v-if="NoteComponent.type === 'page'">
-            <router-link :to="'/note/' + NoteComponent._id">
-          {{ NoteComponent.text }}
-            </router-link>
+          <router-link :to="'/note/' + NoteComponent._id">
+            {{ NoteComponent.text }}
+          </router-link>
         </h3>
         <h3 class="ml-2 text-break" v-if="NoteComponent.type === 'title'">
           {{ NoteComponent.text }}
         </h3>
-        <div class="text-break"
+        <div
+          class="text-break"
           v-if="NoteComponent.type !== 'page' && NoteComponent.type !== 'title'"
         >
           <span class="ml-2" v-if="NoteComponent.type === 'bullet'">
@@ -33,7 +38,7 @@
         </div>
       </v-col>
 
-      <v-col align="end" cols="auto"  class="ma-0 pa-0">
+      <v-col align="end" cols="auto" class="ma-0 pa-0">
         <v-btn icon color="indigo" @click="edit_dialog = true">
           <v-icon>mdi-pencil-outline</v-icon>
         </v-btn>
@@ -80,7 +85,7 @@
             </v-container>
           </v-sheet>
         </v-dialog>
-        <v-btn icon color="indigo" @click="add_dialog = true">
+        <v-btn icon color="indigo" @click="add_dialog = true" :disabled="disabled">
           <v-icon v-if="NoteComponent.type !== 'page'">mdi-plus</v-icon>
         </v-btn>
         <v-btn icon color="red" @click="delete_dialog = true">
@@ -120,19 +125,24 @@
         </v-dialog>
       </v-col>
     </v-row>
-    <div v-if="NoteComponent.type !== 'page' || NoteComponent._id === $route.params.note_id">
-        <v-row
-          aling="center"
-          v-for="content in NoteComponent.properties.content"
-          :key="content"
-        >
-          <v-spacer></v-spacer>
-          <v-col  cols="11" class="ma-0 pa-0">
-            <div class="child">
-              <note-component :id="content"></note-component>
-            </div>
-          </v-col>
-        </v-row>
+    <div
+      v-if="
+        NoteComponent.type !== 'page' ||
+        NoteComponent._id === $route.params.note_id
+      "
+    >
+      <v-row
+        aling="center"
+        v-for="content in NoteComponent.properties.content"
+        :key="content"
+      >
+        <v-spacer></v-spacer>
+        <v-col cols="11" class="ma-0 pa-0">
+          <div class="child">
+            <note-component :id="content"></note-component>
+          </div>
+        </v-col>
+      </v-row>
     </div>
     <v-dialog v-model="add_dialog" width="500">
       <v-card>
@@ -173,7 +183,12 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-row v-if="NoteComponent.type === 'page' && NoteComponent._id === $route.params.note_id">
+    <v-row
+      v-if="
+        NoteComponent.type === 'page' &&
+        NoteComponent._id === $route.params.note_id
+      "
+    >
       <v-col>
         <div class="text-center">
           <v-btn
@@ -209,7 +224,7 @@ export default {
       loading: false,
       items: ["Bullet List", "Check List", "Title", "Paragraph", "Page"],
       show_empty_note_error: false,
-      type: "Title"
+      type: "Title",
     };
   },
   pouch: {
@@ -220,6 +235,11 @@ export default {
         selector: { _id: this.id },
         first: true,
       };
+    },
+  },
+  computed: {
+    disabled() {
+      return this.NoteComponent.type === "page";
     },
   },
   methods: {

@@ -191,18 +191,10 @@ export default {
     },
     deleteNote() {
       this.loading = true;
-      this.$pouch
-        .remove(this.note_selected, {}, this.$store.state.user.db.url)
-        .then(() => {
-          this.dialog = false;
-          this.note_selected = false;
-          this.loading = false;
-        })
-        .catch((err) => {
-          console.log(err);
-          this.dialog = false;
-          this.loading = false;
-        });
+      this.deleteRec(this.note_selected);
+      this.dialog = false;
+      this.note_selected = false;
+      this.loading = false;
     },
     openWarningDialog(note) {
       this.note_selected = note;
@@ -211,6 +203,20 @@ export default {
     closingWarningDialog() {
       this.dialog = false;
       this.note_selected = null;
+    },
+    deleteRec(note) {
+      if (note.properties.content.length !== 0) {
+        note.properties.content.forEach((note_id) => {
+          this.$pouch.get(note_id).then((doc) => {
+            this.deleteRec(doc);
+          });
+        });
+      }
+      this.$pouch
+        .remove(note, {}, this.$store.state.user.db.name)
+        .catch((err) => {
+          console.log(err);
+        });
     },
   },
 };
