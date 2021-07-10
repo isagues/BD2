@@ -389,22 +389,29 @@ export default {
         properties: properties,
         parent: this.NoteComponent.parent,
       };
-      console.log("nota updeteandoseeeee", updated_note);
       this.$pouch
         .put(updated_note, {}, this.$store.state.user.db.name)
         .then((doc) => {
-          console.log("UPDATED PARENT");
-          console.log(this.note);
           console.log(doc);
         })
         .catch((err) => {
-          console.log("estamos n st rror");
           console.log(err);
         });
     },
     deleteComponent() {
       this.loading = true;
-
+      let parent_id = this.NoteComponent.parent;
+      let component_id = this.NoteComponent._id;
+      if (parent_id !== null) {
+        this.$pouch
+          .get(parent_id)
+          .then((doc) => {
+            this.editComponentContent(doc, component_id);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
       this.deleteRec(this.NoteComponent);
 
       this.delete_dialog = false;
@@ -412,14 +419,12 @@ export default {
     },
 
     deleteRec(note) {
-      console.log(note);
       if (note.properties.content.length !== 0) {
-        for (let note_id in note.properties.content) {
+        note.properties.content.forEach((note_id) => {
           this.$pouch.get(note_id).then((doc) => {
-            console.log("doccccc", doc)
             this.deleteRec(doc);
           });
-        }
+        });
       }
       this.$pouch
         .remove(note, {}, this.$store.state.user.db.name)
@@ -453,6 +458,35 @@ export default {
           this.delete_dialog = false;
           this.note_edit_text = null;
           this.loading = false;
+        });
+    },
+    editComponentContent(doc, id) {
+      let new_properties = doc.properties;
+      let new_content = doc.properties.content;
+      for (var i = 0; i < new_content.length; i++) {
+        if (new_content[i] === id) {
+          new_content.splice(i, 1);
+        }
+      }
+      new_properties.content = new_content;
+      this.$pouch
+        .put(
+          {
+            _id: doc._id,
+            _rev: doc._rev,
+            type: doc.type,
+            text: doc.text,
+            properties: new_properties,
+            parent: doc.parent,
+          },
+          {},
+          this.$store.state.user.db.name
+        )
+        .then((edited_doc) => {
+          console.log(edited_doc);
+        })
+        .catch((err) => {
+          console.log(err);
         });
     },
   },

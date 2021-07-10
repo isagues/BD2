@@ -87,7 +87,7 @@
                   >
                     <v-container>
                       <v-row justify="center" align="center">
-                        <v-col cols="1">
+                        <v-col cols="1" class="pr-1">
                           <v-btn
                             color="red darken-4"
                             dark
@@ -99,9 +99,9 @@
                             <v-icon>mdi-close</v-icon>
                           </v-btn>
                         </v-col>
-                        <v-col cols="10">
+                        <v-col cols="10" class="pl-0">
                           <h1
-                            class="ml-3 align-center"
+                            class="align-center"
                             style="
                               font-family: 'Arial Rounded MT Bold', sans-serif;
                             "
@@ -148,7 +148,7 @@ export default {
     notes() {
       return {
         database: this.$store.state.user.db.name, // you can pass a database string or a pouchdb instance
-        selector: {parent: {$eq: null}, type: {$eq: 'page'}},
+        selector: { parent: { $eq: null }, type: { $eq: "page" } },
       };
     },
   },
@@ -190,7 +190,6 @@ export default {
         });
     },
     deleteNote() {
-      console.log(this.note_id);
       this.loading = true;
       this.$pouch
         .remove(this.note_selected, {}, this.$store.state.user.db.url)
