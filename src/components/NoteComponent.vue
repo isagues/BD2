@@ -11,7 +11,7 @@
         <h3 class="ml-2" v-if="NoteComponent.type === 'title'">
           {{ NoteComponent.text }}
         </h3>
-        <div 
+        <div
           v-if="NoteComponent.type !== 'page' && NoteComponent.type !== 'title'"
         >
           <span class="ml-2" v-if="NoteComponent.type === 'bullet'">
@@ -45,7 +45,7 @@
             dark
           >
             <v-container fluid>
-              <v-row >
+              <v-row>
                 <v-col>
                   <v-text-field
                     class="ml-4"
@@ -282,7 +282,7 @@ export default {
           icon: "circle",
           content: [],
         },
-        parent: this.$route.params.note_id,
+        parent: this.NoteComponent._id,
       };
       this.$pouch
         .put(note, {}, this.$store.state.user.db.name)
@@ -307,7 +307,7 @@ export default {
           completed: false,
           content: [],
         },
-        parent: this.$route.params.note_id,
+        parent: this.NoteComponent._id,
       };
       console.log("newcheck", note);
       this.$pouch
@@ -333,7 +333,7 @@ export default {
         properties: {
           content: [],
         },
-        parent: this.$route.params.note_id,
+        parent: this.NoteComponent._id,
       };
       this.$pouch
         .put(note, {}, this.$store.state.user.db.name)
@@ -358,7 +358,7 @@ export default {
         properties: {
           content: [],
         },
-        parent: this.$route.params.note_id,
+        parent: this.NoteComponent._id,
       };
       this.$pouch
         .put(note, {}, this.$store.state.user.db.name)
@@ -404,18 +404,30 @@ export default {
     },
     deleteComponent() {
       this.loading = true;
+
+      this.deleteRec(this.NoteComponent);
+
+      this.delete_dialog = false;
+      this.loading = false;
+    },
+
+    deleteRec(note) {
+      console.log(note);
+      if (note.properties.content.length !== 0) {
+        for (let note_id in note.properties.content) {
+          this.$pouch.get(note_id).then((doc) => {
+            console.log("doccccc", doc)
+            this.deleteRec(doc);
+          });
+        }
+      }
       this.$pouch
-        .remove(this.NoteComponent, {}, this.$store.state.user.db.name)
-        .then(() => {
-          this.delete_dialog = false;
-          this.loading = false;
-        })
+        .remove(note, {}, this.$store.state.user.db.name)
         .catch((err) => {
           console.log(err);
-          this.delete_dialog = false;
-          this.loading = false;
         });
     },
+
     editComponent() {
       this.loading = true;
       this.$pouch
