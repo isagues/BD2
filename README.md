@@ -48,3 +48,6 @@ npm install
 ```bash
 npm run serve
 ```
+### Presentacion
+
+[Persistencia Políglota - Couch + Pouch](https://docs.google.com/presentation/d/1HtOaiWJ0MC0-v2tDTkVshMqH-ADe914Yf9Eel9IdZ_M/edit?usp=sharing)
