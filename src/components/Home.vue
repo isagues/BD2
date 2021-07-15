@@ -78,7 +78,7 @@
               </v-sheet>
             </v-dialog>
             <v-container fluid>
-              <v-row v-for="note in notes" :key="note.text">
+              <v-row v-for="note in notes" :key="note._id">
                 <v-col class="pa-2">
                   <v-card
                     color="indigo lighten-1"

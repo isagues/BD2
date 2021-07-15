@@ -59,9 +59,7 @@ export default {
         console.log(this.$route.params.note_id);
         this.$pouch.get(this.$route.params.note_id)
         .then((doc) => {
-          console.log('reviso',doc);
           if (doc.type !== 'page') {
-            console.log('revisooooooo');
             this.ret(doc);
           }
         })
