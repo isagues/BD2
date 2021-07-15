@@ -154,6 +154,7 @@ export default {
   },
   created() {
     // Send all documents to the remote database, and stream changes in real-time
+    console.log("SYNC");
     this.$pouch.sync(
       this.$store.state.user.db.name,
       this.$store.state.user.db.url
