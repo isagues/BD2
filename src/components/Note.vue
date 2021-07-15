@@ -4,9 +4,11 @@
       <v-app>
           <div v-if="note">
             <div class="text-center mb-2 mt-2">
-              <v-btn @click="ret(note)">
-                Return
+            <div class="d-flex align-items-left pa-0 ml-6 mt-2">
+              <v-btn fab color="indigo" @click="ret(note)">
+                <v-icon color="white">mdi-arrow-left</v-icon>
               </v-btn>
+              </div>
               <h1 class="ml-2 text-center">
                 {{ note.text }}
               </h1>
