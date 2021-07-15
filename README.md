@@ -19,3 +19,32 @@ Por otro lado, PouchDB permite mantener replicada la informacion de forma local 
 A su vez, se realizó un Login haciendo uso de la funcionalidad couch_peruser de CouchDB, permitiendo que cada usuario tenga su propia base de datos. 
 
 
+## Guía de Uso 
+
+### Instalar los requerimientos
+```bash
+npm install 
+```
+
+### Crear un usuario en CouchDB
+1. Entrar a Fauxton.
+2. Crear DB _users (non partitioned)
+3. Ir a settings
+4. Habilitar CORS (all domains)
+5. couch_peruser -> (enable = true)
+6. user_db_security_editable -> true
+7. Insertar usuario y asignarle un rol
+```json
+{     
+    "_id": "org.couchdb.user:username",
+    "name": "username",
+    "type": "user",
+    "roles": ["users"],
+    "password": "password" 
+}
+```
+
+### Levantar la webapp
+```bash
+npm run serve
+```
