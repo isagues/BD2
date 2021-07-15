@@ -1,6 +1,6 @@
-# Persistencia Políglota: CouchDB + Pouch
+# Persistencia Políglota: CouchDB + PouchDB
 
-Sistema de notas estilo Notion con replica local y busqueda de texto completo.
+Sistema de Notas con replica local.  
 
 ## Autores
 
