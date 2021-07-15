@@ -4,6 +4,9 @@
       <v-app>
           <div v-if="note">
             <div class="text-center mb-2 mt-2">
+              <v-btn @click="ret(note)">
+                Return
+              </v-btn>
               <h1 class="ml-2 text-center">
                 {{ note.text }}
               </h1>
@@ -45,9 +48,28 @@ export default {
       };
     },
   },
-  mounted() {
-    console.log(this.$route.params.note_id);
+  created() {
+          // Send all documents to the remote database, and stream changes in real-time
+    this.$pouch.sync(
+      this.$store.state.user.db.name,
+      this.$store.state.user.db.url
+    );
   },
+  updated() {
+        console.log(this.$route.params.note_id);
+        this.$pouch.get(this.$route.params.note_id)
+        .then((doc) => {
+          console.log('reviso',doc);
+          if (doc.type !== 'page') {
+            console.log('revisooooooo');
+            this.ret(doc);
+          }
+        })
+        .catch((err) => {console.log(err);});
+  },
+  // beforeRouteEnter(to) {
+    
+  // },
   methods: {
     showParams(type) {
       if (type === "Bullet List") {
@@ -56,6 +78,14 @@ export default {
         this.check_completed = true;
       }
     },
+    ret(note) {
+      if (!note.parent) {
+        this.$router.push("/home");
+      } else {
+        this.$router.push("/note/" + note.parent);
+      }
+
+    }
   },
 };
 </script>

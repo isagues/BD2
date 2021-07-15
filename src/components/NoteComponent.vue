@@ -133,9 +133,8 @@
     >
       <v-row
         aling="center"
-        v-for="content in NoteComponent.properties.content"
-        :key="content"
-      >
+        v-for="content of NoteComponent.properties.content"
+        :key="content">
         <v-spacer></v-spacer>
         <v-col cols="11" class="ma-0 pa-0">
           <div class="child">
