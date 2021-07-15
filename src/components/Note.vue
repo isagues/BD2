@@ -4,7 +4,7 @@
       <v-app>
           <div v-if="note">
             <div class="text-center mb-2 mt-2">
-              <v-btn @click="ret()">
+              <v-btn @click="ret(note)">
                 Return
               </v-btn>
               <h1 class="ml-2 text-center">
@@ -55,9 +55,21 @@ export default {
       this.$store.state.user.db.url
     );
   },
-  mounted() {
-    console.log(this.$route.params.note_id);
+  updated() {
+        console.log(this.$route.params.note_id);
+        this.$pouch.get(this.$route.params.note_id)
+        .then((doc) => {
+          console.log('reviso',doc);
+          if (doc.type !== 'page') {
+            console.log('revisooooooo');
+            this.ret(doc);
+          }
+        })
+        .catch((err) => {console.log(err);});
   },
+  // beforeRouteEnter(to) {
+    
+  // },
   methods: {
     showParams(type) {
       if (type === "Bullet List") {
@@ -66,11 +78,11 @@ export default {
         this.check_completed = true;
       }
     },
-    ret() {
-      if (!this.note.parent) {
-        this.$router.push("/");
+    ret(note) {
+      if (!note.parent) {
+        this.$router.push("/home");
       } else {
-        this.$router.push("/note/" + this.note.parent);
+        this.$router.push("/note/" + note.parent);
       }
 
     }
