@@ -4,6 +4,9 @@
       <v-app>
           <div v-if="note">
             <div class="text-center mb-2 mt-2">
+              <v-btn @click="ret()">
+                Return
+              </v-btn>
               <h1 class="ml-2 text-center">
                 {{ note.text }}
               </h1>
@@ -45,6 +48,13 @@ export default {
       };
     },
   },
+  created() {
+          // Send all documents to the remote database, and stream changes in real-time
+    this.$pouch.sync(
+      this.$store.state.user.db.name,
+      this.$store.state.user.db.url
+    );
+  },
   mounted() {
     console.log(this.$route.params.note_id);
   },
@@ -56,6 +66,14 @@ export default {
         this.check_completed = true;
       }
     },
+    ret() {
+      if (!this.note.parent) {
+        this.$router.push("/");
+      } else {
+        this.$router.push("/note/" + this.note.parent);
+      }
+
+    }
   },
 };
 </script>
